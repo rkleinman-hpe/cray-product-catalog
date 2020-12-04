@@ -1,0 +1,6 @@
+# Copyright 2020 Hewlett Packard Enterprise Development LP
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cray-product-catalog
+data: null
