@@ -1,0 +1,13 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cray-product-catalog
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cray-product-catalog
+subjects:
+  - kind: ServiceAccount
+    name: cray-product-catalog
+    namespace: services
