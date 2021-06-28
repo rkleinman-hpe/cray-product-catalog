@@ -32,6 +32,7 @@
 # attempt to update the config map until it has been patched successfully.
 import logging
 import os
+import pprint
 import random
 import sys
 import time
@@ -101,7 +102,7 @@ def update_config_map(data, name, namespace):
         # attempting to update the same config map, or the config map doesn't
         # exist yet
         attempt += 1
-        sleepy_time = random.randint(1, 3)
+        sleepy_time = random.randint(3, 10)
         LOGGER.info("Resting %ss before reading ConfigMap", sleepy_time)
         time.sleep(sleepy_time)
 
@@ -121,7 +122,10 @@ def update_config_map(data, name, namespace):
         # Determine if ConfigMap needs to be updated
         config_map_data = response.data or {}  # if no config map data exists
         if PRODUCT not in config_map_data:
-            LOGGER.info("Product=%s does not exist; will update", PRODUCT)
+            LOGGER.info(
+                "Product=%s does not exist; will update; configmap=%s",
+                PRODUCT, pprint.pprint(config_map_data)
+            )
             config_map_data[PRODUCT] = product_data = {PRODUCT_VERSION: {}}
             pass
         # Product exists in ConfigMap
@@ -129,7 +133,8 @@ def update_config_map(data, name, namespace):
             product_data = yaml.safe_load(config_map_data[PRODUCT])
             if PRODUCT_VERSION not in product_data:
                 LOGGER.info(
-                    "Version=%s does not exist; will update", PRODUCT_VERSION
+                    "Version=%s does not exist; will update; configmap=%s",
+                    PRODUCT_VERSION, pprint.pprint(product_data)
                 )
                 product_data[PRODUCT_VERSION] = {}
                 pass
