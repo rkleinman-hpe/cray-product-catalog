@@ -37,8 +37,8 @@ Two seminal examples of using cray-product-catalog are the `cray-import-config`
 and `cray-import-kiwi-recipe-image` base charts. Review the values files and
 Kubernetes job template to see cray-product-catalog in action.
 
-* [cray-import-config](https://stash.us.cray.com/projects/SCMS/repos/cray-product-install-charts/browse/charts/cray-import-config)
-* [cray-import-kiwi-recipe-image](https://stash.us.cray.com/projects/SCMS/repos/cray-product-install-charts/browse/charts/cray-import-kiwi-recipe-image)
+* [cray-import-config](https://github.com/Cray-HPE/cray-product-install-charts/tree/master/charts/cray-import-config)
+* [cray-import-kiwi-recipe-image](https://github.com/Cray-HPE/cray-product-install-charts/tree/master/charts/cray-import-kiwi-recipe-image)
 
 ### Podman on NCN
 
