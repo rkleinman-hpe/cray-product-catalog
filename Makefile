@@ -20,6 +20,9 @@
 #
 # (MIT License)
 
+# If you wish to perform a local build, you will need to clone or copy the contents of the
+# cms-meta-tools repo to ./cms_meta_tools
+
 NAME ?= cray-product-catalog
 APP_NAME ?= $(NAME)-update
 CHART_PATH ?= kubernetes
@@ -29,13 +32,8 @@ CHART_VERSION ?= $(shell head -1 .chart_version)
 
 HELM_UNITTEST_IMAGE ?= quintush/helm-unittest:3.3.0-0.2.5
 
-all: clone_cms_meta_tools runbuildprep lint image chart
+all: runbuildprep lint image chart
 chart: chart_setup chart_package chart_test
-
-# If you wish to perform a local build, you will need to clone or copy the contents of the
-# cms_meta_tools repo to ./cms_meta_tools
-clone_cms_meta_tools:
-		git clone --depth 1 --no-single-branch https://github.com/Cray-HPE/cms-meta-tools.git ./cms_meta_tools
 
 runbuildprep:
 		./cms_meta_tools/scripts/runBuildPrep.sh
