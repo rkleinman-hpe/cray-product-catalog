@@ -18,6 +18,14 @@ pipeline {
     }
 
     stages {
+        stage("Clone cms_meta_tools repo") {
+            steps {
+                withCredentials([gitUsernamePassword(credentialsId: 'jenkins-algol60-cray-hpe-github-integration')]) {
+                    sh 'git clone --depth 1 --no-single-branch https://github.com/Cray-HPE/cms-meta-tools.git ./cms_meta_tools'
+                }
+            }
+        }
+
         stage("Set Versions") {
             steps {
                 script {
@@ -38,14 +46,6 @@ pipeline {
                 
                     // Write chart version to .chart_version
                     writeFile(file: ".chart_version", text: chartver)
-                }
-            }
-        }
-
-        stage("Clone cms_meta_tools repo") {
-            steps {
-                withCredentials([gitUsernamePassword(credentialsId: 'jenkins-algol60-cray-hpe-github-integration')]) {
-                    sh "make clone_cms_meta_tools"
                 }
             }
         }
@@ -79,10 +79,10 @@ pipeline {
                 stage('Chart') {
                     environment {
                         DOCKER_VERSION = sh(returnStdout: true, script: "head -1 .docker_version").trim()
-                        CHART_VERSION = sh(returnStdout: true, script: "head -1 .chart_version").trim()
                     }
 
                     steps {
+                        updateCsmHelmChartAppVersion(chartPath: "${WORKSPACE}/kubernetes/${NAME}", appVersion: env.DOCKER_VERSION)
                         sh "make chart"
                     }
                 }
