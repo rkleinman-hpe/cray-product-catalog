@@ -26,7 +26,7 @@ RUN apk update \
     && apk add --update --no-cache gcc python3-dev libc-dev \
     && pip3 install --no-cache-dir -r requirements.txt \
     && rm -rf *.txt
-USER nobody
+USER nobody:nobody
 ADD catalog_update.py /
 ENTRYPOINT [ "/catalog_update.py" ]
 
