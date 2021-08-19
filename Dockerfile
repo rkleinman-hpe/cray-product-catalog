@@ -19,15 +19,14 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # (MIT License)
-FROM artifactory.algol60.net/docker.io/alpine:3
+FROM artifactory.algol60.net/docker.io/alpine:3 as base
 RUN apk add --no-cache py3-pip python3
 COPY *.txt /
 RUN apk update \
-    && apk add --update --no-cache \
-        gcc \
-        python3-dev \
-        libc-dev \
-    && pip3 install --no-cache-dir -r requirements.txt
-ADD *.py /
-
+    && apk add --update --no-cache gcc python3-dev libc-dev \
+    && pip3 install --no-cache-dir -r requirements.txt \
+    && rm -rf *.txt
+USER nobody
+ADD catalog_update.py /
 ENTRYPOINT [ "/catalog_update.py" ]
+
