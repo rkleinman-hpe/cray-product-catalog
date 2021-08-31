@@ -22,11 +22,14 @@
 FROM artifactory.algol60.net/docker.io/alpine:3 as base
 RUN apk add --no-cache py3-pip python3
 COPY *.txt /
-RUN apk update \
+RUN apk add --upgrade --no-cache apk-tools \
+	&& apk update \
     && apk add --update --no-cache gcc python3-dev libc-dev \
+	&& apk -U upgrade --no-cache \
     && pip3 install --no-cache-dir -r requirements.txt \
     && rm -rf *.txt
-USER nobody
+USER nobody:nobody
+COPY gitInfo.txt /
 ADD catalog_update.py /
 ENTRYPOINT [ "/catalog_update.py" ]
 
