@@ -19,7 +19,7 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 # (MIT License)
-FROM artifactory.algol60.net/docker.io/alpine:3 as base
+FROM artifactory.algol60.net/docker.io/alpine:3.13 as base
 RUN apk add --no-cache py3-pip python3
 COPY *.txt /
 RUN apk add --upgrade --no-cache apk-tools \
