@@ -55,7 +55,7 @@ ncn-w001:~/ # podman run --rm --name example-cpc --network podman-cni-config \
     -e KUBECONFIG=/.kube/admin.conf \
     -v /etc/kubernetes:/.kube:ro \
     -v ${PWD}:/results:ro \
-    artifactory.algol60.net/csm-docker/stable/cray-product-catalog-update:1.0.17
+    artifactory.algol60.net/csm-docker/stable/cray-product-catalog-update:1.1.37
 Updating config_map=cray-product-catalog in namespace=services for product/version=example/1.2.3
 Retrieving content from /results/example.yaml
 Resting 3s before reading ConfigMap
