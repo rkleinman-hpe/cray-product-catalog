@@ -1,5 +1,7 @@
 mode: ContinuousDeployment
-branches: {}
+branches:
+  release:
+    regex: ^release\/[\d.]+
 ignore:
   sha: []
 merge-message-formats: {}
