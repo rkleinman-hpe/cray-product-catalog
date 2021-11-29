@@ -1,8 +1,7 @@
 name: Get Version
 on:
   push:
-    branches:
-      - feature/**
+  pull_request:
 
 jobs:
 
