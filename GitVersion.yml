@@ -1,0 +1,8 @@
+mode: ContinuousDeployment
+branches:
+  release:
+    # Do not consider legacy release/[shasta,csm]-* branches as gitflow release branches
+    regex: ^release\/[\d.]+
+ignore:
+  sha: []
+merge-message-formats: {}

@@ -1,0 +1,58 @@
+name: Build Docker Image
+on:
+  push:
+  pull_request:
+
+jobs:
+
+  get-version:
+    runs-on: self-hosted
+    outputs:
+      semVer: ${{ steps.gitversion.outputs.semVer }}
+      preReleaseTag: ${{ steps.gitversion.outputs.PreReleaseTag }}
+
+    steps:
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.7
+        with:
+          versionSpec: '5.8.1'
+
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Run GitVersion to compute semantic version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.9.7
+
+  build-docker-image:
+    runs-on: self-hosted
+    needs: get-version
+    env:
+      DOCKER_REPO_BASE: artifactory.algol60.net/csm-docker
+      IMAGE_NAME: cray-product-catalog-update
+
+    steps:
+      - name: Stable or unstable build
+        run: |
+          if ${{ needs.get-version.outputs.preReleaseTag == '' }}; then
+            echo "DOCKER_REPO=${DOCKER_REPO_BASE}/stable" >> $GITHUB_ENV
+          else
+            echo "DOCKER_REPO=${DOCKER_REPO_BASE}/unstable" >> $GITHUB_ENV
+          fi
+      - name: build-sign-scan
+        uses: Cray-HPE/github-actions/build-sign-scan@rkleinman-docker-args
+        with:
+          docker_push: true
+          context_path: .
+          docker_repo: ${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}
+          docker_tag: ${{ needs.get-version.outputs.semVer }}
+          docker_build_args: |
+            VERSION=${{ needs.get-version.outputs.semVer }}
+          artifactory_algol60_token: ${{ secrets.ARTIFACTORY_ALGOL60_TOKEN }}
+          cosign_gcp_project_id: ${{ secrets.COSIGN_GCP_PROJECT_ID }}
+          cosign_gcp_sa_key: ${{ secrets.COSIGN_GCP_SA_KEY }}
+          cosign_key: ${{ secrets.COSIGN_KEY }}
+          snyk_token: ${{ secrets.SNYK_TOKEN }}
+          github_sha: $GITHUB_SHA
