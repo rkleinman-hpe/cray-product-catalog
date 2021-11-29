@@ -1,8 +1,7 @@
-name: Get Version
+name: Build Docker Image
 on:
   push:
   pull_request:
-  tag:
 
 jobs:
 
