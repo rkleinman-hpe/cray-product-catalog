@@ -2,7 +2,7 @@ name: Get Version
 on:
   push:
   pull_request:
-  tags:
+  tag:
 
 jobs:
 
