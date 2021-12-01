@@ -120,7 +120,7 @@ output is governed by the `GitVersion.yml` file in the root of this repo.
 
 ## Contributing
 
-CMS folks, make a branch. Others, make a fork.
+This repo uses gitflow. CMS-core-product-support team make a branch. Others, make a fork.
 
 ## Built With
 
