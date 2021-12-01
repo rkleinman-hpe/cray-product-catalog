@@ -1,8 +1,39 @@
 mode: ContinuousDeployment
 branches:
+  main:
+    regex: ^master$|^main$
+    mode: ContinuousDelivery
+  develop:
+    regex: ^develop$
+    mode: ContinuousDeployment
   release:
     # Do not consider legacy release/[shasta,csm]-* branches as gitflow release branches
     regex: ^release\/[\d.]+
+    mode: ContinuousDelivery
+  feature:
+    regex: ^features?[/-]
+    mode: ContinuousDelivery
+  pull-request:
+    regex: ^(pull|pull\-requests|pr)[/-]
+    mode: ContinuousDelivery
+  hotfix:
+    regex: ^hotfix(es)?[/-]
+    mode: ContinuousDelivery
+  support:
+    regex: ^support[/-]
+    mode: ContinuousDelivery
 ignore:
   sha: []
 merge-message-formats: {}
+
+
+
+
+#mode: ContinuousDeployment
+#branches:
+#  release:
+#    # Do not consider legacy release/[shasta,csm]-* branches as gitflow release branches
+#    regex: ^release\/[\d.]+
+#ignore:
+#  sha: []
+#merge-message-formats: {}
