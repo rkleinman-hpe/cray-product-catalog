@@ -72,4 +72,5 @@ jobs:
             echo "HELM_REPO=${HELM_REPO_BASE}/unstable" >> $GITHUB_ENV
           fi
       - name: print repo env
+        run: |
           echo $HELM_REPO
