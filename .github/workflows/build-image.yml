@@ -61,7 +61,7 @@ jobs:
     runs-on: self-hosted
     needs: get-version
     env:
-      HELM_REPO_BASE: artifactory.algol60.net/csm-helm-charts/cray-product-catalog
+      HELM_REPO_BASE: artifactory.algol60.net/csm-helm-charts
       CHART_NAME: cray-product-catalog
     steps:
       - name: Stable or unstable build
@@ -71,4 +71,5 @@ jobs:
           else
             echo "HELM_REPO=${HELM_REPO_BASE}/unstable" >> $GITHUB_ENV
           fi
+      - name: print repo env
           echo $HELM_REPO
