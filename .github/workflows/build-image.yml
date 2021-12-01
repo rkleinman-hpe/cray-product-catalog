@@ -56,3 +56,19 @@ jobs:
           cosign_key: ${{ secrets.COSIGN_KEY }}
           snyk_token: ${{ secrets.SNYK_TOKEN }}
           github_sha: $GITHUB_SHA
+
+  build-helm-chart:
+    runs-on: self-hosted
+    needs: get-version
+    env:
+      HELM_REPO_BASE: artifactory.algol60.net/csm-helm-charts/cray-product-catalog
+      CHART_NAME: cray-product-catalog
+    steps:
+      - name: Stable or unstable build
+        run: |
+          if ${{ needs.get-version.outputs.preReleaseTag == '' }}; then
+            echo "HELM_REPO=${HELM_REPO_BASE}/stable" >> $GITHUB_ENV
+          else
+            echo "HELM_REPO=${HELM_REPO_BASE}/unstable" >> $GITHUB_ENV
+          fi
+          echo $HELM_REPO
