@@ -8,7 +8,7 @@ jobs:
   get-version:
     runs-on: self-hosted
     outputs:
-      FullSemVer: ${{ steps.gitversion.outputs.FullSemVer }}
+      semVer: ${{ steps.gitversion.outputs.semVer }}
       preReleaseTag: ${{ steps.gitversion.outputs.PreReleaseTag }}
 
     steps:
@@ -47,9 +47,9 @@ jobs:
           docker_push: true
           context_path: .
           docker_repo: ${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}
-          docker_tag: ${{ needs.get-version.outputs.FullSemVer }}
+          docker_tag: ${{ needs.get-version.outputs.semVer }}
           docker_build_args: |
-            VERSION=${{ needs.get-version.outputs.FullSemVer }}
+            VERSION=${{ needs.get-version.outputs.semVer }}
           artifactory_algol60_token: ${{ secrets.ARTIFACTORY_ALGOL60_TOKEN }}
           cosign_gcp_project_id: ${{ secrets.COSIGN_GCP_PROJECT_ID }}
           cosign_gcp_sa_key: ${{ secrets.COSIGN_GCP_SA_KEY }}
