@@ -104,19 +104,13 @@ All configuration options are provided as environment variables.
 
  > The Kubernetes namespace of the `CONFIG_MAP`.
 
-## Build Helpers
-This repo uses some build helpers from the 
-[cms-meta-tools](https://github.com/Cray-HPE/cms-meta-tools) repo. See that repo for more details.
-
-## Local Builds
-
-TBD
-
-
 ## Versioning
 
 Versions are calculated automatically using `gitversion`. The full SemVer
 output is governed by the `GitVersion.yml` file in the root of this repo.
+
+Run `gitversion -output json` to see the current version based on the checked
+out commit.
 
 ## Contributing
 
