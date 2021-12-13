@@ -114,7 +114,7 @@ out commit.
 
 ## Contributing
 
-CMS-core-product-support team folks, make a branch. Others, make a fork.
+This repo uses gitflow. CMS-core-product-support team make a branch. Others, make a fork.
 
 ## Built With
 
