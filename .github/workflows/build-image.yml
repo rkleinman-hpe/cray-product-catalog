@@ -36,7 +36,7 @@ jobs:
     steps:
       - name: Set the build date/time
         id: date
-        run: echo "::set-output name=builddatetime::$(date +'%Y-%m-%dT%H:%M:%S')"
+        run: echo "::set-output name=builddatetime::$(date +'%Y%m%d%H%M%S')"
         shell: bash
 
       - name: Install GitVersion
