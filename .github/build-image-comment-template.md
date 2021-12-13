@@ -11,6 +11,11 @@ podman pull {{ .imageDownloadLink }}
 ```
 
 Or, use this script to pull the image from the build server to a dev system:
+
+<details>
+<summary>Dev System Pull Script</summary>
+<br />
+
 ```
 #!/usr/bin/env bash
 
@@ -24,5 +29,6 @@ zypper in -y --repo {{ .zypperRepoName }} skopeo
 skopeo copy --dest-tls-verify=false docker://${REMOTE_IMAGE} docker://registry.local/cray/${LOCAL_IMAGE}
 zypper rr {{ .zypperRepoName }}
 ```
+</details>
 
 *Note*: this SHA is the merge of {{ .PRHeadSha }} and the PR base branch. Good luck and make rocket go now! 🌮 🚀
