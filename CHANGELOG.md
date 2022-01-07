@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Fix the draft release PR workflow to add labels
+
 ## [1.4.5] - 2022-01-07
 
 -   Add workflows for creating PRs for a draft release, and tagging and release
