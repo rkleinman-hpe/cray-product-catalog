@@ -1,6 +1,6 @@
 # Cray Product Catalog
 
-This repository contains the Docker image definition for the cray-product-catalog
+This repository contains the Docker image definition for the cray-product-catalog-update
 image. This image provides a script that uploads the contents of a yaml file to
 a product catalog entry, which serves as a kubernetes config map.
 
@@ -14,13 +14,16 @@ file as follows:
     {content of yaml file (in YAML_CONTENT)}
 ```
 
-The product catalog is a software inventory of sorts, and allows for system
-users to view a product and its associated versions and version metadata that
-have been _installed_ on the system.
+The product catalog is a lightweight software inventory of sorts, and allows for
+system users to view a product and its associated versions and version metadata
+that have been _installed_ on the system.
 
-The cray-product-catalog image is assumed to be running in the Shasta
+The cray-product-catalog-update image is assumed to be running in the CSM
 Kubernetes cluster by an actor that has permissions to read and update config
 maps in the namespace that is configured.
+
+Additionally, this repository provides the `cray-product-catalog` config map,
+which is managed by the cray-product-catalog Helm chart.
 
 ## Getting Started
 
@@ -104,23 +107,24 @@ All configuration options are provided as environment variables.
 
  > The Kubernetes namespace of the `CONFIG_MAP`.
 
-## Build Helpers
-This repo uses some build helpers from the 
-[cms-meta-tools](https://github.com/Cray-HPE/cms-meta-tools) repo. See that repo for more details.
-
-## Local Builds
-
-TBD
-
-
-## Versioning
+## Versioning and Releases
 
 Versions are calculated automatically using `gitversion`. The full SemVer
 output is governed by the `GitVersion.yml` file in the root of this repo.
 
+Run `gitversion -output json` to see the current version based on the checked
+out commit.
+
+Create a release by triggering the "Draft New Release" workflow with the version
+that will be released.
+
+Releases are automatically published when pull requests to the master branch
+are merged.
+
 ## Contributing
 
-CMS folks, make a branch. Others, make a fork.
+This repo uses [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/). 
+CMS-core-product-support team members shouuld make a branch. Others, make a fork.
 
 ## Built With
 
@@ -129,12 +133,13 @@ CMS folks, make a branch. Others, make a fork.
 * Python Requests
 * Kubernetes Python Client
 * Docker
+* [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/)
+* [Gitversion](https://gitversion.net)
 * Good intentions
 
-## Blamelog
+## Changelog
 
-* _0.1.0_ - initial release for Shasta 1.4, addition to CSM product stream - David Laine (david.laine@hpe.com)
-* _0.0.1_ - initial implementation - Randy Kleinman (randy.kleinman@hpe.com)
+See the [CHANGELOG](CHANGELOG.md) for changes.
 
 ## Copyright and License
 This project is copyrighted by Hewlett Packard Enterprise Development LP and is under the MIT
