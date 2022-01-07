@@ -17,8 +17,8 @@ jobs:
         with:
           ref: develop
 
-      - name: Create release branch
-        run: git checkout -b release/${{ github.event.inputs.version }}
+      # - name: Create release branch
+      #   run: git checkout -b release/${{ github.event.inputs.version }}
 
       - name: Update changelog
         uses: thomaseizinger/keep-a-changelog-new-release@1.1.0
@@ -27,10 +27,10 @@ jobs:
 
       # In order to make a commit, we need to initialize a user.
       # You may choose to write something less generic here if you want, it doesn't matter functionality wise.
-      - name: Initialize mandatory git config
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email noreply@github.com
+      # - name: Initialize mandatory git config
+      #   run: |
+      #     git config user.name "github-actions[bot]"
+      #     git config user.email noreply@github.com
 
       # This step will differ depending on your project setup
       # Fortunately, yarn has a built-in command for doing this!
