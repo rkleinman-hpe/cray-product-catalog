@@ -51,7 +51,6 @@ jobs:
           team-reviewers: |
             owners
             maintainers
-          milestone: 1
           draft: false
 
       # if needed, you can checkout the latest master here, build artifacts and publish / deploy them somewhere
