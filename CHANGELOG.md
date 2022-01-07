@@ -15,22 +15,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.4.4] - 2022-01-07
 
 -   Build docker image, helm chart, python module with GH actions (CASMCMS-7698)
+
+## [1.4.3] - 2022-01-05
+
 -   Change default behavior to stop setting "active" key unless `SET_ACTIVE_VERSION`
     variable is given.
 
-## [1.4.2] - 2021-12-01
+## 1.4.2 - 2021-12-01
 
 ### Changed
 
 -   Updated README to reflect versioning change in v1.4.1.
 
-## [1.4.1] - 2021-12-01
+## 1.4.1 - 2021-12-01
 
 ### Changed
 
 -   Changed GitVersion.yml to ignore previous CSM release branches
 
-## [1.4.0] - 2021-11-29
+## 1.4.0 - 2021-11-29
 
 ### Added
 
@@ -38,7 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Add GitVersion.yml for automatic git versioning using Gitflow
 -   Pull python requirements from PyPI, not arti.dev.cray.com to enable GH actions builds
 
-## [1.3.1] - 2021-11-19
+## 1.3.1 - 2021-11-19
 
 ### Added
 
@@ -49,7 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Conformed chart to CASM-2670 specifications (CASMCMS-7619)
 
-## [1.2.71] - 2017-11-15
+## 1.2.71 - 2017-11-15
 
 ### Added
 
@@ -64,5 +67,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Unreleased]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.5...HEAD
 
 [1.4.5]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.4...1.4.5
+[1.4.4]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.3...1.4.4
+[1.4.3]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.2...1.4.3
 
-[1.4.4]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.2...1.4.4
