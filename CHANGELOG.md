@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Add workflows for creating PRs for a draft release, and tagging and release
+  creation when a release branch is merged to master.
+
 ## [1.4.4] - 2022-01-07
 
 -   Build docker image, helm chart, python module with GH actions (CASMCMS-7698)

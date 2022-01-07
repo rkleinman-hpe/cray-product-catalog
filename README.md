@@ -115,8 +115,8 @@ output is governed by the `GitVersion.yml` file in the root of this repo.
 Run `gitversion -output json` to see the current version based on the checked
 out commit.
 
-Create a release by triggering the "Draft New Release" workflow with the version
-that will be released.
+Create a release by triggering the [Draft New Release](https://github.com/Cray-HPE/cray-product-catalog/actions/workflows/draft-new-release.yml)
+workflow with the version that will be released.
 
 Releases are automatically published when pull requests to the master branch
 are merged.
