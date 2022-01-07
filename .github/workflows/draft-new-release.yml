@@ -40,9 +40,6 @@ jobs:
       - name: Commit changelog and manifest files
         id: make-commit
         run: |
-          curl -fsSL https://dprint.dev/install.sh | sh
-          /home/runner/.dprint/bin/dprint init
-          /home/runner/.dprint/bin/dprint fmt
           git add CHANGELOG.md
           git commit --message "[bot] Prepare release ${{ github.event.inputs.version }}"
           echo "::set-output name=commit::$(git rev-parse HEAD)"
