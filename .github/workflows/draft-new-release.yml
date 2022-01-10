@@ -9,6 +9,12 @@ on:
         description: 'The (SemVer) version to release:'
         required: true
 
+permissions:
+#  actions: write
+  pull-requests: write
+  contents: read
+#  repository-projects: read
+
 jobs:
   draft-new-release:
     name: "Draft a new release"
