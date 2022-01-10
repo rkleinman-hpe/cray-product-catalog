@@ -70,7 +70,7 @@ jobs:
           echo "Pull Request URL - ${{ steps.cpr.outputs.html_url }}"
 
   trigger-release-workflows:
-    name: "Create release branch pull request"
+    name: "Trigger Release Branch Workflows"
     runs-on: self-hosted
     needs:
       - create-release-draft
@@ -94,8 +94,6 @@ jobs:
           private-key: ${{ secrets.ALGOL60_GITHUB_READONLY_APP }}
           app-id: ${{env.GITHUB_AUTH_APP_ID}}
 
-# output ^^ GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}
-
       - name: Trigger Pull request and branch push workflows
         run: |
           echo "Triggering build-artifacts.yml for PR #${PR_NUMBER}"
@@ -103,3 +101,6 @@ jobs:
         env:
           PR_NUMBER: ${{ needs.create-release-draft.outputs.pr-number }}
           BRANCH: ${{ needs.create-release-draft.outputs.release-branch }}
+          GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
