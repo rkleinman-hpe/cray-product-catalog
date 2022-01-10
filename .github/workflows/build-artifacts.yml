@@ -14,6 +14,7 @@ on:
       - 'v*'
 
   pull_request: # opened, syncronize, reopened
+  workflow_dispatch:  # for release workflows to trigger automatic builds
 
 # Globals
 env:
