@@ -60,11 +60,13 @@ jobs:
           private-key: ${{ secrets.ALGOL60_GITHUB_READONLY_APP }}
           app-id: ${{env.GITHUB_AUTH_APP_ID}}
 
+# output ^^ GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}
+
       - name: Create Pull Request (release/${{ github.event.inputs.version }} -> master)
         id: cpr
         uses: thomaseizinger/create-pull-request@1.2.2
         env:
-          GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           head: release/${{ github.event.inputs.version }}
           base: master
