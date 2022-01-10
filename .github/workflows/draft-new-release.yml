@@ -94,7 +94,7 @@ jobs:
           private-key: ${{ secrets.ALGOL60_GITHUB_READONLY_APP }}
           app-id: ${{env.GITHUB_AUTH_APP_ID}}
 
-      - name: Trigger Pull request and branch push workflows
+      - name: Trigger push workflow for release branch
         run: |
           echo "Triggering build-artifacts.yml for PR #${PR_NUMBER}"
           gh workflow run build-artifacts.yml --ref ${BRANCH}

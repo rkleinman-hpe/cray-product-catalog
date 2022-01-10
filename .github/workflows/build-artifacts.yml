@@ -9,11 +9,11 @@ on:
       - 'releases/csm-**'
       - 'releases/shasta-**'
 
-    # Build production releases from tags on main/master, see GitFlow
+    # Build production releases from tags on main/master, or beta releases from
+    # release/hotfix branches.
     tags:
       - 'v*'
 
-  pull_request: # opened, syncronize, reopened
   workflow_dispatch:  # for release workflows to trigger automatic builds
 
 # Globals
@@ -318,7 +318,7 @@ jobs:
 
   update-pr-with-artifacts:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'pull_request' }}
+    #if: ${{ github.event_name == 'pull_request' }}
     needs:
       - build-prep
       - build-image
@@ -327,6 +327,17 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+
+      - name: Find Pull Request
+        uses: juliangruber/find-pull-request-action@v1
+        id: find-pull-request
+        with:
+          branch: ${{ github.base_ref }}
+
+      - run: echo "Pull Request ${number} (${sha})"
+        env:
+          number: ${{ steps.find-pull-request.outputs.number }}
+          sha: ${{ steps.find-pull-request.outputs.head-sha }}
 
       - name: Create comment vars
         id: comment-vars
@@ -337,7 +348,7 @@ jobs:
         uses: peter-evans/find-comment@v1
         id: fc
         with:
-          issue-number: ${{ github.event.pull_request.number }}
+          issue-number: ${{ steps.find-pull-request.outputs.number }}
           comment-author: 'github-actions[bot]'
           body-includes: 'Hey there committers and reviewers'
 
@@ -354,7 +365,7 @@ jobs:
             zypperRepoName: ${{ steps.comment-vars.outputs.repo_name }}
             commit: ${{ needs.build-prep.outputs.short-sha }}
             baseBranch: ${{ github.base_ref }}
-            srcBranch: ${{ github.event.pull_request.head.ref }}
+            srcBranch: ${{ steps.find-pull-request.outputs.head-sha }}
             chartName: ${{ env.CHART_NAME }}
             chartVersion: ${{ needs.build-prep.outputs.chart-version }}
             pymodVersion: ${{ needs.build-prep.outputs.py-version }}
@@ -363,7 +374,7 @@ jobs:
         uses: peter-evans/create-or-update-comment@v1
         if: steps.fc.outputs.comment-id == ''
         with:
-          issue-number: ${{ github.event.pull_request.number }}
+          issue-number: ${{ steps.find-pull-request.outputs.number }}
           body: ${{ steps.template.outputs.result }}
           reactions: rocket
 
