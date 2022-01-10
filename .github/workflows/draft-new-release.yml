@@ -13,7 +13,7 @@ permissions:
   actions: write
   pull-requests: write
   contents: read
-  repository-projects: read
+  repository-projects: write
 
 jobs:
   draft-new-release:
