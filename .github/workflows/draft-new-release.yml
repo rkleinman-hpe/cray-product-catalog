@@ -13,6 +13,8 @@ jobs:
   draft-new-release:
     name: "Draft a new release"
     runs-on: ubuntu-latest
+    env:
+      GITHUB_AUTH_APP_ID: 129003
     steps:
       - uses: actions/checkout@v2
 
@@ -44,14 +46,29 @@ jobs:
           git commit --message "[bot] Prepare release ${{ github.event.inputs.version }}"
           echo "::set-output name=commit::$(git rev-parse HEAD)"
 
+      # - name: Push new branch
+      #   uses: stefanzweifel/git-auto-commit-action@v4
+      #   with:
+      #     commit_message: "[bot] Prepare release ${{ github.event.inputs.version }}"
+      #     commit_user_name: "github-actions[bot]"
+      #     commit_author: GitHub Actions <actions@github.com>
+
       - name: Push new branch
         run: git push origin release/${{ github.event.inputs.version }}
+
+      - name: Get auth token
+        uses: navikt/github-app-token-generator@v1
+        id: get-token
+        with:
+          private-key: ${{ secrets.ALGOL60_GITHUB_READONLY_APP }}
+          app-id: ${{env.GITHUB_AUTH_APP_ID}}
 
       - name: Create Pull Request (release/${{ github.event.inputs.version }} -> master)
         id: cpr
         uses: thomaseizinger/create-pull-request@1.2.2
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}
         with:
           head: release/${{ github.event.inputs.version }}
           base: master
