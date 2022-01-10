@@ -15,12 +15,13 @@ permissions:
 #   contents: read
 #   repository-projects: write
 
+env:
+  GITHUB_AUTH_APP_ID: 129003
+
 jobs:
   draft-new-release:
     name: "Draft a new release"
     runs-on: ubuntu-latest
-    env:
-      GITHUB_AUTH_APP_ID: 129003
     steps:
       - uses: actions/checkout@v2
 
@@ -32,35 +33,12 @@ jobs:
         with:
           tag: ${{ github.event.inputs.version }}
 
-      # # In order to make a commit, we need to initialize a user.
-      # # You may choose to write something less generic here if you want, it doesn't matter functionality wise.
-      # - name: Initialize mandatory git config
-      #   run: |
-      #     git config user.name "github-actions[bot]"
-      #     git config user.email noreply@github.com
-
-      # This step will differ depending on your project setup
-      # Fortunately, yarn has a built-in command for doing this!
-      # Not needed for repos that use gitversion
-      # - name: Bump version in package.json
-      #   run: yarn version --new-version ${{ github.event.inputs.version }} --no-git-tag-version
-
-      # - name: Commit changelog and manifest files
-      #   id: make-commit
-      #   run: |
-      #     git add CHANGELOG.md
-      #     git commit --message "[bot] Prepare release ${{ github.event.inputs.version }}"
-      #     echo "::set-output name=commit::$(git rev-parse HEAD)"
-
       - name: Push new branch
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "[bot] Prepare release ${{ github.event.inputs.version }}"
           commit_user_name: "github-actions[bot]"
           branch: release/${{ github.event.inputs.version }}
-
-      # - name: Push new branch
-      #   run: git push origin release/${{ github.event.inputs.version }}
 
       - name: Get auth token
         uses: navikt/github-app-token-generator@v1
@@ -73,7 +51,6 @@ jobs:
         id: cpr
         uses: thomaseizinger/create-pull-request@1.2.2
         env:
-          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ steps.get-token.outputs.token }}
         with:
           head: release/${{ github.event.inputs.version }}
