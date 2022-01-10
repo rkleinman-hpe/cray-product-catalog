@@ -9,11 +9,11 @@ on:
         description: 'The (SemVer) version to release:'
         required: true
 
-permissions:
-  actions: write
-  pull-requests: write
-  contents: read
-  repository-projects: write
+# permissions:
+#   actions: write
+#   pull-requests: write
+#   contents: read
+#   repository-projects: write
 
 jobs:
   draft-new-release:
@@ -32,12 +32,12 @@ jobs:
         with:
           tag: ${{ github.event.inputs.version }}
 
-      # In order to make a commit, we need to initialize a user.
-      # You may choose to write something less generic here if you want, it doesn't matter functionality wise.
-      - name: Initialize mandatory git config
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email noreply@github.com
+      # # In order to make a commit, we need to initialize a user.
+      # # You may choose to write something less generic here if you want, it doesn't matter functionality wise.
+      # - name: Initialize mandatory git config
+      #   run: |
+      #     git config user.name "github-actions[bot]"
+      #     git config user.email noreply@github.com
 
       # This step will differ depending on your project setup
       # Fortunately, yarn has a built-in command for doing this!
@@ -45,22 +45,22 @@ jobs:
       # - name: Bump version in package.json
       #   run: yarn version --new-version ${{ github.event.inputs.version }} --no-git-tag-version
 
-      - name: Commit changelog and manifest files
-        id: make-commit
-        run: |
-          git add CHANGELOG.md
-          git commit --message "[bot] Prepare release ${{ github.event.inputs.version }}"
-          echo "::set-output name=commit::$(git rev-parse HEAD)"
-
-      # - name: Push new branch
-      #   uses: stefanzweifel/git-auto-commit-action@v4
-      #   with:
-      #     commit_message: "[bot] Prepare release ${{ github.event.inputs.version }}"
-      #     commit_user_name: "github-actions[bot]"
-      #     commit_author: GitHub Actions <actions@github.com>
+      # - name: Commit changelog and manifest files
+      #   id: make-commit
+      #   run: |
+      #     git add CHANGELOG.md
+      #     git commit --message "[bot] Prepare release ${{ github.event.inputs.version }}"
+      #     echo "::set-output name=commit::$(git rev-parse HEAD)"
 
       - name: Push new branch
-        run: git push origin release/${{ github.event.inputs.version }}
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "[bot] Prepare release ${{ github.event.inputs.version }}"
+          commit_user_name: "github-actions[bot]"
+          branch: release/${{ github.event.inputs.version }}
+
+      # - name: Push new branch
+      #   run: git push origin release/${{ github.event.inputs.version }}
 
       - name: Get auth token
         uses: navikt/github-app-token-generator@v1
