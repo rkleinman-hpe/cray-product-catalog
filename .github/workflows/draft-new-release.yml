@@ -9,36 +9,45 @@ on:
         description: 'The (SemVer) version to release:'
         required: true
 
-permissions:
-#   actions: write
-  pull-requests: write
-#   contents: read
-#   repository-projects: write
-
-env:
-  GITHUB_AUTH_APP_ID: 129003
-
 jobs:
-  draft-new-release:
+  create-release-draft:
     name: "Draft a new release"
     runs-on: ubuntu-latest
+    outputs:
+      commit: ${{ steps.auto-commit-action.outputs.commit_hash }}
     steps:
       - uses: actions/checkout@v2
-
-      - name: Create release branch
-        run: git checkout -b release/${{ github.event.inputs.version }}
+        with:
+          ref: develop
 
       - name: Update changelog
         uses: thomaseizinger/keep-a-changelog-new-release@1.3.0
         with:
           tag: ${{ github.event.inputs.version }}
 
+      # If anything else needs to be done (bump version files etc) to generate
+      # a release in this repository, do it here
+
       - name: Push new branch
         uses: stefanzweifel/git-auto-commit-action@v4
+        id: auto-commit-action
         with:
           commit_message: "[bot] Prepare release ${{ github.event.inputs.version }}"
           commit_user_name: "github-actions[bot]"
           branch: release/${{ github.event.inputs.version }}
+
+  create-release-pr:
+    name: "Create a PR for the new release branch"
+    runs-on: ubuntu-latest
+    needs: create-release-draft
+    env:
+      GITHUB_AUTH_APP_ID: 129003
+    permissions:
+      #   actions: write
+      pull-requests: write
+      #   contents: read
+      #   repository-projects: write
+    steps:
 
       - name: Get auth token
         uses: navikt/github-app-token-generator@v1
@@ -62,7 +71,7 @@ jobs:
             Hi @${{ github.actor }}!
 
             This PR was created in response to a manual trigger of the release workflow here: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}.
-            The bots committed changes the changelog and bumped versions (if applicable) in this commit: ${{ steps.make-commit.outputs.commit }}.
+            The bots committed changes the changelog and bumped versions (if applicable) in this commit: ${{ needs.create-release-draft.outputs.commit }}.
 
             Merging this PR will automatically create a GitHub release and create a PR with an updated CSM manifest (if applicable).
             See .github/workflows/publish-new-release.yml.
