@@ -9,9 +9,9 @@ on:
         description: 'The (SemVer) version to release:'
         required: true
 
-# permissions:
+permissions:
 #   actions: write
-#   pull-requests: write
+  pull-requests: write
 #   contents: read
 #   repository-projects: write
 
