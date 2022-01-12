@@ -7,18 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Fix the draft release PR workflow to add labels
+### Changed
+
+- Only build artifacts on push events, not PRs. Change PR comments to point to
+  the individual commit, not the overall PR.
 
 ## [1.4.5] - 2022-01-07
+
+### Added
 
 -   Add workflows for creating PRs for a draft release, and tagging and release
     creation when a release branch is merged to master.
 
 ## [1.4.4] - 2022-01-07
 
+### Added
+
 -   Build docker image, helm chart, python module with GH actions (CASMCMS-7698)
 
 ## [1.4.3] - 2022-01-05
+
+### Changed
 
 -   Change default behavior to stop setting "active" key unless `SET_ACTIVE_VERSION`
     variable is given.
