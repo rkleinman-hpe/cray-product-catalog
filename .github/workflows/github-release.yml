@@ -27,14 +27,14 @@ jobs:
         fi
 
     - uses: ncipollo/release-action@v1
-      if: steps.prerelease.outputs.gh_prerelease == false
+      if: steps.prerelease.outputs.gh_prerelease == 'false'
       with:
         generateReleaseNotes: true
         prerelease: false
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - uses: ncipollo/release-action@v1
-      if: steps.prerelease.outputs.gh_prerelease == true
+      if: steps.prerelease.outputs.gh_prerelease == 'true'
       with:
         generateReleaseNotes: true
         prerelease: true
