@@ -9,8 +9,8 @@ jobs:
 
   create-gh-release:
     runs-on: ubuntu-latest
-    # permissions:
-    #   contents: write
+    permissions:
+      contents: write
     steps:
     - uses: actions/checkout@v2
     - name: Get semver tool; determine prerelease or not
