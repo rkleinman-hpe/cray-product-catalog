@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.10] - 2022-01-13
+
 ### Changed
 
-- Only build artifacts on push events, not PRs. Change PR comments to point to
-  the individual commit, not the overall PR.
+-   Only build artifacts on push events, not PRs. Change PR comments to point to
+    the individual commit, not the overall PR.
 
 ## [1.4.6] - 2022-01-07
 
@@ -79,7 +81,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Updated repo to Gitflow branching strategy; develop branch now base branch
 -   Change default reviewers to CMS-core-product-support
 
-[Unreleased]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.6...HEAD
+[Unreleased]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.10...HEAD
+
+[1.4.10]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.6...1.4.10
 
 [1.4.6]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.5...1.4.6
 
