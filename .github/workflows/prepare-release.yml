@@ -20,8 +20,6 @@ jobs:
       - name: find version from branch name
         id: get-version
         run: |
-          env | sort
-          echo ${GITHUB_HEAD_REF}
           if [[ "${{ contains(github.head_ref, 'release') }}" = "true" ]]; then
             VERSION=${GITHUB_HEAD_REF##release/}
           fi
