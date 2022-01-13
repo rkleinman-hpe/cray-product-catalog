@@ -66,8 +66,7 @@ jobs:
         run: |
           echo ::set-output name=chart-version::$(echo ${{ steps.buildprepversion.outputs.version }}+${{ steps.buildprepversion.outputs.build-date-time }}.${{ steps.buildprepversion.outputs.short-sha }})
           echo ::set-output name=pre-release-tag::$(echo ${{ env.GITVERSION_PRERELEASETAG }})
-          echo $GITVERSION_PRERELEASETAG
-          if [[ ${{ env.GITVERSION_PRERELEASETAG }} = "" ]]; then
+          if [[ "${{ env.GITVERSION_PRERELEASETAG }}" = "" ]]; then
             echo ::set-output name=image-version::$(echo ${{ steps.buildprepversion.outputs.version }}-${{ steps.buildprepversion.outputs.build-date-time }}.${{ steps.buildprepversion.outputs.short-sha }})
           else
             echo ::set-output name=image-version::$(echo ${{ steps.buildprepversion.outputs.version }}.${{ steps.buildprepversion.outputs.build-date-time }}.${{ steps.buildprepversion.outputs.short-sha }})
