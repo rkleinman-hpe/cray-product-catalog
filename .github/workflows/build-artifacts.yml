@@ -1,5 +1,6 @@
 name: Build Test Scan Publish Artifacts
 on:
+  workflow_dispatch:
   push:
     # Do not build pushes to the main/master branch, tags build prod releases
     # Do not build release branches from historical CSM/Shasta releases
@@ -13,20 +14,26 @@ on:
     tags:
       - 'v*'
 
-  pull_request: # opened, syncronize, reopened
-
 # Globals
 env:
+
+  # Package/artifact names
   IMAGE_NAME: cray-product-catalog-update
   CHART_NAME: cray-product-catalog
   PYMOD_NAME: cray-product-catalog
+
+  # Artifact repository locations
   REGISTRY: artifactory.algol60.net
   REGISTRY_USERNAME: github-actions-cray-hpe
   REGISTRY_DOWNLOAD_PATH: artifactory
   IMAGE_REPOSITORY: csm-docker
   CHART_REPOSITORY: csm-helm-charts
   PYMOD_REPOSITORY: csm-python-modules
+
+  # Testing variables
   CHART_UNITTEST_IMAGE: quintush/helm-unittest:3.3.0-0.2.5
+
+  # Code checker variables
   SNYK_SEVERITY_THRESHOLD: high
 
 # Workflow Jobs
@@ -175,7 +182,7 @@ jobs:
             dist/*.whl
           retention-days: 7
 
-  build-image:
+  build-scan-sign-publish-image:
     runs-on: ubuntu-latest
     needs: build-prep
     outputs:
@@ -183,6 +190,7 @@ jobs:
       full-image-download-path: ${{ steps.buildvars.outputs.image-download }}
       image-base: ${{ steps.buildvars.outputs.image-base }}
       image-tag: ${{ steps.buildvars.outputs.image-tag }}
+      snyk-passed: ${{ steps.snyk-result.outputs.snyk-passed }}
 
     steps:
       - uses: actions/checkout@v2
@@ -238,25 +246,6 @@ jobs:
           path: docker-image.tar.gz
           retention-days: 7
 
-  scan-image:
-    runs-on: ubuntu-latest
-    needs: build-image
-    outputs:
-      snyk-passed: ${{ steps.snyk-result.outputs.snyk-passed }}
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-
-      - name: Retrieve saved Docker image
-        uses: actions/download-artifact@v2
-        with:
-          name: docker-image
-
-      - name: Load Docker Image
-        shell: bash
-        run: |
-          docker load --input docker-image.tar.gz
-
       # Run the scanner, continue on if errors are found so the results can be
       # reported to the Github Code Scanning alerts tab
       - name: Run Snyk to check Docker images for vulnerabilities
@@ -266,7 +255,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          image: ${{ needs.build-image.outputs.full-image }}
+          image: ${{ steps.buildvars.outputs.full-image }}
           args: --severity-threshold=${{ env.SNYK_SEVERITY_THRESHOLD }} --skip-unresolved=true --file=Dockerfile
           sarif: true
           json: true
@@ -282,26 +271,9 @@ jobs:
         with:
           sarif_file: snyk.sarif
 
-  # Push the image to the remote registry if the snyk scan was clean
-  publish-image:
-    runs-on: ubuntu-latest
-    if: ${{ fromJSON(needs.scan-image.outputs.snyk-passed) }}
-    needs:
-      - build-image
-      - scan-image
-
-    steps:
-      - name: Retrieve saved Docker image
-        uses: actions/download-artifact@v2
-        with:
-          name: docker-image
-
-      - name: Load Docker Image
-        shell: bash
-        run: |
-          docker load --input docker-image.tar.gz
-
+      # Push the image to the remote registry if the snyk scan was clean
       - name: Login to algol60 Container Registry
+        if: ${{ fromJSON(steps.snyk-result.outputs.snyk-passed) }}
         uses: docker/login-action@v1
         with:
           registry: ${{ env.REGISTRY }}
@@ -309,76 +281,92 @@ jobs:
           password: ${{ secrets.ARTIFACTORY_ALGOL60_TOKEN }}
 
       - name: Push Image to Registry
+        if: ${{ fromJSON(steps.snyk-result.outputs.snyk-passed) }}
         shell: bash
         run: 
           docker push ${{ env.IMAGE }}
         env:
-          IMAGE: ${{ needs.build-image.outputs.full-image }}
+          IMAGE: ${{ steps.buildvars.outputs.full-image }}
 
-  update-pr-with-artifacts:
+  publish-deploy-script:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'pull_request' }}
+    if: ${{ fromJSON(needs.build-scan-sign-publish-image.outputs.snyk-passed) }}
     needs:
       - build-prep
-      - build-image
-      - publish-image
+      - build-scan-sign-publish-image
       - build-publish-helm-chart
+    env:
+      IMAGE_TAG: ${{ needs.build-scan-sign-publish-image.outputs.image-tag }}
+      STABLE: ${{ needs.build-prep.outputs.is-stable }}
+      CHART_VERSION: ${{ needs.build-prep.outputs.chart-version }}
+      PYMOD_VERSION: ${{ needs.build-prep.outputs.py-version }}
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Create comment vars
-        id: comment-vars
+      - name: Create additional template vars
+        id: vars
         run: |
           echo ::set-output name=repo_name::$(echo ${GITHUB_REPOSITORY}_${GITHUB_REF_NAME} | sed 's|/|_|g')
+          echo ::set-output name=image::$(echo ${IMAGE_NAME}:${IMAGE_TAG})
+          echo ::set-output name=image_url::$(echo https://artifactory.algol60.net/ui/repos/tree/General/csm-docker%2F${STABLE}%2F${IMAGE_NAME}%2F${IMAGE_TAG})
+          echo ::set-output name=chart::$(echo ${CHART_NAME}-${CHART_VERSION})
+          echo ::set-output name=chart_url::$(echo https://artifactory.algol60.net/ui/repos/tree/General/csm-helm-charts%2F${STABLE}%2F${CHART_NAME}%2F${CHART_NAME}-${CHART_VERSION}.tgz)
+          echo ::set-output name=pymod::$(echo ${PYMOD_NAME}-${PYMOD_VERSION})
+          echo ::set-output name=pymod_url::$(echo https://artifactory.algol60.net/ui/repos/tree/General/csm-python-modules%2Fsimple%2Fcray-product-catalog%2Fcray_product_catalog-${PYMOD_VERSION}-py3-none-any.whl)
 
-      - name: Find Comment
-        uses: peter-evans/find-comment@v1
-        id: fc
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: 'Hey there committers and reviewers'
-
-      - name: Render template
+      - name: Render deploy script template
         uses: chuhlomin/render-template@v1.4
         id: template
         with:
-          template: .github/pr-test-script.md.tmpl
+          result_path: deploy-script.sh
+          template: .github/templates/deploy-script.sh.tmpl
           vars: |
-            fullImage: ${{ needs.build-image.outputs.full-image }}
-            isStable: ${{ needs.build-prep.outputs.is-stable }}
+            buildDateTime: ${{ needs.build-prep.outputs.build-date-time }} 
+            repository: ${{ github.repository }}
+            run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            fullImage: ${{ needs.build-scan-sign-publish-image.outputs.full-image }}
             imageName: ${{ env.IMAGE_NAME }}
-            imageTag: ${{ needs.build-image.outputs.image-tag }}
-            zypperRepoName: ${{ steps.comment-vars.outputs.repo_name }}
+            imageTag: ${{ env.IMAGE_TAG }}
+            zypperRepoName: ${{ steps.vars.outputs.repo_name }}
             commit: ${{ needs.build-prep.outputs.short-sha }}
-            baseBranch: ${{ github.base_ref }}
-            srcBranch: ${{ github.event.pull_request.head.ref }}
+            ref: ${{ github.ref_name }}
+            ref_type: ${{ github.ref_type }}
             chartName: ${{ env.CHART_NAME }}
-            chartVersion: ${{ needs.build-prep.outputs.chart-version }}
-            pymodVersion: ${{ needs.build-prep.outputs.py-version }}
+            chartVersion: ${{ env.CHART_VERSION }}
+            pymodVersion: ${{ env.PYMOD_VERSION }}
 
-      - name: Create comment
-        uses: peter-evans/create-or-update-comment@v1
-        if: steps.fc.outputs.comment-id == ''
+      - name: Upload Deploy Script as Build Artifact
+        uses: actions/upload-artifact@v2
         with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body: ${{ steps.template.outputs.result }}
-          reactions: rocket
+          name: deploy-script.sh
+          path: deploy-script.sh
+          retention-days: 30
 
-      - name: Update comment
-        if: steps.fc.outputs.comment-id != ''
-        uses: peter-evans/create-or-update-comment@v1
+      - name: Capture the artifactory locations of the build artifacts
+        uses: schdck/create-env-json@v1
         with:
-          comment-id: ${{ steps.fc.outputs.comment-id }}
-          body: ${{ steps.template.outputs.result }}
-          edit-mode: replace
+          file-name: 'artifacts.json'
+          image: ${{ steps.vars.outputs.image }}
+          image_url: ${{ steps.vars.outputs.image_url }}
+          chart: ${{ steps.vars.outputs.chart }}
+          chart_url: ${{ steps.vars.outputs.chart_url }}
+          pymod: ${{ steps.vars.outputs.pymod }}
+          pymod_url: ${{ steps.vars.outputs.pymod_url }}
+
+      - name: Upload artifactory artifact metadata as a Build Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifacts.json
+          path: artifacts.json
+          retention-days: 30
 
   sign-image-sbom:
     runs-on: ubuntu-latest
+    if: ${{ fromJSON(needs.build-scan-sign-publish-image.outputs.snyk-passed) }}
     needs: 
-      - build-image
-      - publish-image
+      - build-scan-sign-publish-image
 
     steps:
 
@@ -393,7 +381,7 @@ jobs:
           registry-username: ${{ env.REGISTRY_USERNAME }}
           registry-password: ${{ secrets.ARTIFACTORY_ALGOL60_TOKEN }}
           github-sha: ${{ env.GITHUB_SHA }}
-          image: ${{ needs.build-image.outputs.full-image }}
+          image: ${{ needs.build-scan-sign-publish-image.outputs.full-image }}
 
       - name: Generate, Attach, and Sign container image SBOM
         uses: Cray-HPE/.github/actions/csm-generate-attach-sign-sbom@v1-csm-generate-attach-sign-sbom
@@ -406,13 +394,14 @@ jobs:
           registry-username: ${{ secrets.ARTIFACTORY_ALGOL60_USERNAME }}
           registry-password: ${{ secrets.ARTIFACTORY_ALGOL60_TOKEN }}
           github-sha: ${{ env.GITHUB_SHA }}
-          image: ${{ needs.build-image.outputs.full-image }}
+          image: ${{ needs.build-scan-sign-publish-image.outputs.full-image }}
 
   build-publish-helm-chart:
+    if: ${{ fromJSON(needs.build-scan-sign-publish-image.outputs.snyk-passed) }}
     runs-on: ubuntu-latest
     needs:
       - build-prep
-      - build-image
+      - build-scan-sign-publish-image
 
     steps:
       - name: Checkout repo
@@ -452,7 +441,7 @@ jobs:
 
       - name: Update ${{ env.IMAGE_NAME }} image ref
         run: |
-          sed -i 's|${{ env.IMAGE_NAME }}:0.0.0|${{ needs.build-image.outputs.full-image }}|g' charts/${{ env.CHART_NAME }}/Chart.yaml
+          sed -i 's|${{ env.IMAGE_NAME }}:0.0.0|${{ needs.build-scan-sign-publish-image.outputs.full-image }}|g' charts/${{ env.CHART_NAME }}/Chart.yaml
 
       - name: Sort annotation keys
         uses: mikefarah/yq@master

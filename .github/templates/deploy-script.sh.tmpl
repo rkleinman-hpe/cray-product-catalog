@@ -1,17 +1,11 @@
-👋  Hey there committers and reviewers! Here's some artifacts this PR created:
+#!/usr/bin/env bash
+# {{ .chartName }} Deploy Script:
+#   created: {{ .buildDateTime }}
+#   commit: {{ .commit }}
+#   ref: {{ .ref }} {{ .ref_type }}
+#   repository: {{ .repository }}
+#   generator: {{ .run }}
 
-* Docker Image ([{{ .imageName }}:{{ .imageTag }}](https://artifactory.algol60.net/ui/repos/tree/General/csm-docker%2F{{ .isStable }}%2F{{ .imageName }}%2F{{ .imageTag }}))
-* Helm chart ([{{ .chartName }}-{{ .chartVersion }}](https://artifactory.algol60.net/ui/repos/tree/General/csm-helm-charts%2F{{ .isStable }}%2F{{ .chartName }}%2F{{ .chartName }}-{{ .chartVersion }}.tgz))
-* Python Module ([{{ .pymodVersion }}](https://artifactory.algol60.net/ui/repos/tree/General/csm-python-modules%2Fsimple%2Fcray-product-catalog%2Fcray_product_catalog-{{ .pymodVersion }}-py3-none-any.whl))
-
-*Note*: {{ .commit }} is the merge commit of the `{{ .baseBranch }}` and `{{ .srcBranch }}` branches.
-
-Wanna deploy this change? Copy the script below to a test system and make rocket go now! 🌮 🚀
-
-<details>
-<summary>{{ .chartName }} Test Deploy Script</summary>
-
-```
 cat <<EOF > image-download-{{ .commit }}.sh
 #!/usr/bin/env bash
 
@@ -49,6 +43,3 @@ echo "Rendered manifest"
 cat ./manifest-{{ .chartName }}-{{ .commit }}.yaml
 
 loftsman ship --manifest-path ./manifest-{{ .chartName }}-{{ .commit }}.yaml
-```
-
-</details>
