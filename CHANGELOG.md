@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Test release with only CHANGELOG updates
+
 ## [1.4.11] - 2022-01-19
+
+## Added
+
+- Added workflows for finishing gitflow release and merging back to develop
 
 ## [1.4.10] - 2022-01-13
 
