@@ -1,6 +1,6 @@
 name: Build Test Scan Publish Artifacts
 on:
-  workflow_dispatch:
+
   push:
     # Do not build pushes to the main/master branch, tags build prod releases
     # Do not build release branches from historical CSM/Shasta release branches
@@ -13,9 +13,12 @@ on:
       - '!release/csm-**'
       - '!release/shasta-**'
 
-    # Build production releases from tags on main/master, see GitFlow
+    # Build production releases from tags on main/master, or beta releases from
+    # release or hotfix branches.
     tags:
       - 'v*'
+
+    workflow_dispatch: # Any commit can be built, they can via this override
 
 # Globals
 env:

@@ -31,7 +31,7 @@ jobs:
         run: |
           # Kinda expected the previous action to do this, but it doesn't always
           # end up that way.
-          sleep 120;
+          sleep 60;
 
       - name: Download deploy script artifact
         if: steps.wait-for-build.outputs.conclusion == 'success'

@@ -9,8 +9,8 @@ jobs:
 
   create-gh-release:
     runs-on: ubuntu-latest
-    # permissions:
-    #   contents: write
+    permissions:
+      contents: write
     steps:
     - uses: actions/checkout@v2
     - name: Get semver tool; determine prerelease or not
@@ -27,14 +27,14 @@ jobs:
         fi
 
     - uses: ncipollo/release-action@v1
-      if: ${{ steps.prerelease.outputs.gh_prerelease == "false" }}
+      if: steps.prerelease.outputs.gh_prerelease == 'false'
       with:
         generateReleaseNotes: true
         prerelease: false
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - uses: ncipollo/release-action@v1
-      if: ${{ steps.prerelease.outputs.gh_prerelease == "true" }}
+      if: steps.prerelease.outputs.gh_prerelease == 'true'
       with:
         generateReleaseNotes: true
         prerelease: true
