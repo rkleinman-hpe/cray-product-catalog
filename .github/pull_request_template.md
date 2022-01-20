@@ -45,7 +45,6 @@ _Are there known issues with these changes? Any other special considerations?_
 - [ ] Copyrights updated
 - [ ] License file intact
 - [ ] Target branch correct
-- [ ] CHANGELOG.md updated
 - [ ] Testing is appropriate and complete, if applicable
 - [ ] [HPC Product Announcement](https://cray.slack.com/archives/C026TVCSXLH) prepared, if applicable
 

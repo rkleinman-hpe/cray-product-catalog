@@ -7,15 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [1.4.13] - 2022-01-20
+
 ## Added
 
 - Add changelog checker workflow
+
+## [1.4.12] - 2022-01-19
+
+-   Test release with only CHANGELOG updates
 
 ## [1.4.11] - 2022-01-19
 
 ## Added
 
-- Added workflows for finishing gitflow release and merging back to develop
+-   Added workflows for finishing gitflow release and merging back to develop
 
 ## [1.4.10] - 2022-01-13
 
@@ -91,7 +98,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Updated repo to Gitflow branching strategy; develop branch now base branch
 -   Change default reviewers to CMS-core-product-support
 
-[Unreleased]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.11...HEAD
+[Unreleased]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.13...HEAD
+
+[1.4.13]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.12...1.4.13
+
+[1.4.12]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.11...1.4.12
 
 [1.4.11]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.10...1.4.11
 
