@@ -1,3 +1,4 @@
+# Gitflow Configuration for this repository
 mode: ContinuousDeployment
 branches:
   main:
