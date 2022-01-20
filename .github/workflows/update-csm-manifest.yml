@@ -1,0 +1,22 @@
+# Update the CSM Manifest with artifacts from a given release
+name: "Update CSM Manifest"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'version to update CSM manifest:'
+        required: true
+      csm-branch:
+        description: 'version in the Cray-HPE/csm repo to update'
+        required: true
+        default: 'main'
+      csm-manifest-path:
+        description: 'relative path to the CSM manifest to update'
+        required: true
+        default: 'manifests/sysmgmt.yaml'
+      create-pr:
+        type: boolean
+        description: 'create a pull request in the Cray-HPE/csm repo'
+        required: true
+        default: true
