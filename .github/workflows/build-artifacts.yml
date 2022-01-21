@@ -1,4 +1,4 @@
-name: Build Test Scan Publish Artifacts
+name: Build Artifacts
 
 # Globals
 env:
@@ -56,6 +56,8 @@ on:
       COSIGN_KEY:
         required: true
     outputs:
+      run-id:
+        value: ${{ jobs.publish-deploy-script.outputs.run-id }}
       semVer:
         value: ${{ jobs.build-prep.outputs.semVer }}
       image-version:
@@ -352,9 +354,12 @@ jobs:
       CHART_VERSION: ${{ needs.build-prep.outputs.chart-version }}
       PYMOD_VERSION: ${{ needs.build-prep.outputs.py-version }}
     outputs:
+      run-id: ${{ github.run_id }}
       image: ${{ steps.vars.outputs.image }}
+      image_tag: ${{ steps.vars.outputs.image_tag }}
       image_url: ${{ steps.vars.outputs.image_url }}
       chart: ${{ steps.vars.outputs.chart }}
+      chart_version: ${{ steps.vars.outputs.chart_version }}
       chart_url: ${{ steps.vars.outputs.chart_url }}
       pymod: ${{ steps.vars.outputs.pymod }}
       pymod_url: ${{ steps.vars.outputs.pymod_url }}
@@ -368,8 +373,10 @@ jobs:
         run: |
           echo ::set-output name=repo_name::$(echo ${GITHUB_REPOSITORY}_${GITHUB_REF_NAME} | sed 's|/|_|g')
           echo ::set-output name=image::$(echo ${IMAGE_NAME}:${IMAGE_TAG})
+          echo ::set-output name=image_tag::$(echo ${IMAGE_TAG})
           echo ::set-output name=image_url::$(echo https://artifactory.algol60.net/ui/repos/tree/General/csm-docker%2F${STABLE}%2F${IMAGE_NAME}%2F${IMAGE_TAG})
           echo ::set-output name=chart::$(echo ${CHART_NAME}-${CHART_VERSION})
+          echo ::set-output name=chart_version::$(echo ${CHART_VERSION})
           echo ::set-output name=chart_url::$(echo https://artifactory.algol60.net/ui/repos/tree/General/csm-helm-charts%2F${STABLE}%2F${CHART_NAME}%2F${CHART_NAME}-${CHART_VERSION}.tgz)
           echo ::set-output name=pymod::$(echo ${PYMOD_NAME}-${PYMOD_VERSION})
           echo ::set-output name=pymod_url::$(echo https://artifactory.algol60.net/ui/repos/tree/General/csm-python-modules%2Fsimple%2Fcray-product-catalog%2Fcray_product_catalog-${PYMOD_VERSION}-py3-none-any.whl)
@@ -400,15 +407,17 @@ jobs:
         with:
           name: deploy-script.sh
           path: deploy-script.sh
-          retention-days: 30
+          retention-days: 90
 
       - name: Capture the artifactory locations of the build artifacts
         uses: schdck/create-env-json@v1
         with:
           file-name: 'artifacts.json'
           image: ${{ steps.vars.outputs.image }}
+          image_tag: ${{ steps.vars.outputs.image_tag }}
           image_url: ${{ steps.vars.outputs.image_url }}
           chart: ${{ steps.vars.outputs.chart }}
+          chart_version: ${{ steps.vars.outputs.chart_version }}
           chart_url: ${{ steps.vars.outputs.chart_url }}
           pymod: ${{ steps.vars.outputs.pymod }}
           pymod_url: ${{ steps.vars.outputs.pymod_url }}
@@ -418,7 +427,7 @@ jobs:
         with:
           name: artifacts.json
           path: artifacts.json
-          retention-days: 30
+          retention-days: 90
 
   sign-image-sbom:
     runs-on: ubuntu-latest

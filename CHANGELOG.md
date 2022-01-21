@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Draft Update CSM manifest workflow
+- Update CSM manifest workflow
 - Release workflow to build artifacts and create GH releases on tags
 
 ### Changed

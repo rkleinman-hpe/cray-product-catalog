@@ -10,8 +10,7 @@ jobs:
 
   # Build and upload artifacts
   build-artifacts:
-    # FIXME: For now, have to specify a ref for calling reusable workflows, see https://github.community/t/ref-head-in-reusable-workflows/203690/30
-    uses: Cray-HPE/cray-product-catalog/.github/workflows/build-artifacts.yml@feature/increment
+    uses: Cray-HPE/cray-product-catalog/.github/workflows/build-artifacts.yml
     secrets:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       ARTIFACTORY_ALGOL60_JFROG_CLI_CONFIGURATION: ${{ secrets.ARTIFACTORY_ALGOL60_JFROG_CLI_CONFIGURATION }}
@@ -31,6 +30,7 @@ jobs:
 
     steps:
       - run: |
+          echo ${{ needs.build-artifacts.outputs.run-id }}
           echo ${{ needs.build-artifacts.outputs.semVer }}
           echo ${{ needs.build-artifacts.outputs.image-version }}
           echo ${{ needs.build-artifacts.outputs.chart-version }}
@@ -54,7 +54,7 @@ jobs:
       - name: Extract release notes
         if: needs.build-artifacts.outputs.is-stable == 'stable'
         id: extract-release-notes
-        uses: ffurrer2/extract-release-notes@v1.10.0
+        uses: ffurrer2/extract-release-notes@v1.11.0
         with:
           changelog_file: CHANGELOG.md
 
@@ -75,6 +75,17 @@ jobs:
             runUrl: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             runID: ${{ github.run_id }}
 
+      - run: |
+          sleep 30;
+
+      - name: Download artifacts.json
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: build-artifacts.yml
+          workflow_conclusion: success
+          run_id: ${{ needs.build-artifacts.outputs.run-id }}
+          name: artifacts.json
+
       - uses: ncipollo/release-action@v1
         if: needs.build-artifacts.outputs.is-stable == 'stable'
         with:
@@ -82,6 +93,8 @@ jobs:
           prerelease: false
           body: ${{ steps.template.outputs.result }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: artifacts.json
+          artifactContentType: application/json
 
       - uses: ncipollo/release-action@v1
         if: needs.build-artifacts.outputs.is-stable == 'unstable'
@@ -90,3 +103,5 @@ jobs:
           prerelease: true
           body: ${{ steps.template.outputs.result }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: artifacts.json
+          artifactContentType: application/json
