@@ -96,8 +96,11 @@ jobs:
             runUrl: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             runID: ${{ github.run_id }}
 
-      - run: |
-          sleep 30;
+      - name: Wait a while for the github api to report the workflow/artifact
+        run: |
+          # Kinda expected the previous action to do this, but it doesn't always
+          # end up that way.
+          sleep 60;
 
       - name: Download artifacts.json
         uses: dawidd6/action-download-artifact@v2
