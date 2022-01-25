@@ -6,6 +6,7 @@ branches:
     mode: ContinuousDelivery
   develop:
     regex: ^develop$
+    increment: Patch
     mode: ContinuousDeployment
   release:
     # Do not consider legacy release/[shasta,csm]-* branches as gitflow release branches
@@ -19,6 +20,7 @@ branches:
     mode: ContinuousDelivery
   hotfix:
     regex: ^hotfix(es)?[/-]
+    tag: hotfix
     mode: ContinuousDelivery
   support:
     regex: ^support[/-]
