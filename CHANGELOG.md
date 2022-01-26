@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Let PR artifacts deploy workflow time out if it doesn't find a matching build
+
 ## [1.4.20] - 2022-01-26
 
 ### Changed
