@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.19] - 2022-01-26
+
+### Added
+
+- Add gitflow mergeback workflow
+
 ## [1.4.18] - 2022-01-26
 
 ### Added
