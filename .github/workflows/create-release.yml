@@ -98,31 +98,35 @@ jobs:
             runID: ${{ github.run_id }}
 
       - name: Download artifacts.json
-        uses: dawidd6/action-download-artifact@v2
-        id: artifacts-dl
-        continue-on-error: true
+        uses: actions/download-artifact@v2
         with:
-          workflow: build-artifacts.yml
-          workflow_conclusion: success
-          run_id: ${{ needs.build-artifacts.outputs.run-id }}
           name: artifacts.json
 
-      - name: Wait a while for the github api to report the workflow/artifact
-        if: ${{ always() && steps.artifacts-dl.outcome == 'failure' }}
-        run: |
-          # Kinda expected the previous action to do this, but it doesn't always
-          # end up that way.
-          sleep 90;
+      # - name: Download artifacts.json
+      #   uses: dawidd6/action-download-artifact@v2
+      #   id: artifacts-dl
+      #   continue-on-error: true
+      #   with:
+      #     workflow: build-artifacts.yml
+      #     workflow_conclusion: success
+      #     run_id: ${{ needs.build-artifacts.outputs.run-id }}
+      #     name: artifacts.json
 
-      - name: Download artifacts.json (retry)
-        uses: dawidd6/action-download-artifact@v2
-        if: ${{ always() && steps.artifacts-dl.outcome == 'failure' }}
-        continue-on-error: true
-        with:
-          workflow: build-artifacts.yml
-          workflow_conclusion: success
-          run_id: ${{ needs.build-artifacts.outputs.run-id }}
-          name: artifacts.json
+      # - name: Wait a while for the github api to report the workflow/artifact
+      #   if: ${{ always() && steps.artifacts-dl.outcome == 'failure' }}
+      #   run: |
+      #     # Kinda expected the previous action to do this, but it doesn't always
+      #     # end up that way.
+      #     sleep 90;
+
+      # - name: Download artifacts.json (retry)
+      #   uses: dawidd6/action-download-artifact@v2
+      #   if: ${{ always() && steps.artifacts-dl.outcome == 'failure' }}
+      #   with:
+      #     workflow: build-artifacts.yml
+      #     workflow_conclusion: success
+      #     run_id: ${{ needs.build-artifacts.outputs.run-id }}
+      #     name: artifacts.json
 
       - uses: ncipollo/release-action@v1
         if: needs.build-artifacts.outputs.is-stable == 'stable'
