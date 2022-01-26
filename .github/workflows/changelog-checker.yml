@@ -29,8 +29,9 @@ on:
 jobs:
   check-changelog:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.pull_request.labels.*.name, 'gitflow-maintenance dependabot')"
+    if: "!(contains(github.event.pull_request.labels.*.name, 'gitflow-maintenance') ||  contains(github.event.pull_request.labels.*.name, 'dependabot'))"
     steps:
+
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
