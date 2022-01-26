@@ -102,7 +102,9 @@ jobs:
         with:
           name: artifacts.json
 
-      - uses: ncipollo/release-action@v1
+      - name: Create Stable Release
+        uses: ncipollo/release-action@v1
+        id: stable-release
         if: needs.build-artifacts.outputs.is-stable == 'stable'
         with:
           generateReleaseNotes: true
@@ -111,8 +113,17 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: artifacts.json
           artifactContentType: application/json
+          allowUpdates: true  # for rebuilds to remove CVEs, etc
 
-      - uses: ncipollo/release-action@v1
+      - name: Output Release information
+        if: needs.build-artifacts.outputs.is-stable == 'stable'
+        run: |
+          echo Created release id: ${{ steps.stable-release.outputs.id}}
+          echo Created release: ${{ steps.stable-release.outputs.html_url}}
+
+      - name: Create Prerelease
+        id: prerelease-release
+        uses: ncipollo/release-action@v1
         if: needs.build-artifacts.outputs.is-stable == 'unstable'
         with:
           generateReleaseNotes: true
@@ -121,3 +132,10 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: artifacts.json
           artifactContentType: application/json
+          allowUpdates: true  # for rebuilds to remove CVEs, etc
+
+      - name: Output Release information
+        if: needs.build-artifacts.outputs.is-stable == 'unstable'
+        run: |
+          echo Created release id: ${{ steps.prerelease-release.outputs.id}}
+          echo Created release: ${{ steps.prerelease-release.outputs.html_url}}
