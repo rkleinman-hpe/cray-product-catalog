@@ -37,8 +37,8 @@ jobs:
         uses: navikt/github-app-token-generator@v1
         id: get-token
         with:
-          private-key: ${{ secrets.CSM_GITFLOW_MERGEBACK_BOT_APP_ID }}
-          app-id: ${{ secrets.CSM_GITFLOW_MERGEBACK_BOT_APP_KEY }}
+          private-key: ${{ secrets.CSM_GITFLOW_MERGEBACK_BOT_APP_KEY }}
+          app-id: ${{ secrets.CSM_GITFLOW_MERGEBACK_BOT_APP_ID }}
 
       - uses: actions/checkout@v2
         with:
