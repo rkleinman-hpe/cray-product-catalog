@@ -7,10 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.23] - 2022-01-27
+
 ### Changed
 
 - Restrict the changelog and artifact pr workflows to not run on gitflow and
   dependency update PRs
+- dependabot update python dep attrs from 21.2.0 to 21.4.0
 
 ## [1.4.22] - 2022-01-27
 
@@ -159,7 +162,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated repo to Gitflow branching strategy; develop branch now base branch
 - Change default reviewers to CMS-core-product-support
 
-[Unreleased]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.22...HEAD
+[Unreleased]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.23...HEAD
+
+[1.4.23]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.22...1.4.23
 
 [1.4.22]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.21...1.4.22
 

@@ -49,6 +49,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           checkName: publish-deploy-script
           ref: ${{ github.event.pull_request.head.sha }}
+          timeoutSeconds: 300
+          intervalSeconds: 30
 
       # Some PRs don't have push branch builds (master, for example). Don't
       # attempt to update the PR with artifact locations in a comment, just
