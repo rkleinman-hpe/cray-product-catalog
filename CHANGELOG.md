@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.22] - 2022-01-27
+
+### Changed
+
+- Fixed gitflow mergeback workflow to use correct app key/id
+
 ## [1.4.21] - 2022-01-26
 
 ### Changed
@@ -148,9 +154,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated repo to Gitflow branching strategy; develop branch now base branch
 - Change default reviewers to CMS-core-product-support
 
-[Unreleased]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.21...HEAD
+[Unreleased]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.22...HEAD
 
-[1.4.20]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.20...1.4.21
+[1.4.22]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.21...1.4.22
+
+[1.4.21]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.20...1.4.21
 
 [1.4.20]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.19...1.4.20
 
