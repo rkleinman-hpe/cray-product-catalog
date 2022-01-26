@@ -29,7 +29,7 @@ on:
 jobs:
   check-changelog:
     runs-on: ubuntu-latest
-    #if: "!contains(github.event.pull_request.labels.*.name, 'gitflow-maintenance dependabot')"
+    if: "!(contains(github.event.pull_request.labels.*.name, 'gitflow-maintenance') ||  contains(github.event.pull_request.labels.*.name, 'dependabot'))"
     steps:
       - run: |
           echo label names: ${{ github.event.pull_request.labels.*.name }}
