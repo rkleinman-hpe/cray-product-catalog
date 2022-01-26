@@ -32,7 +32,10 @@ env:
 # Workflow Jobs
 jobs:
   wait-for-deploy-script:
-    if: "!contains(github.event.pull_request.labels.*.name, 'gitflow-maintenance dependabot')"
+    if: "!(
+      contains(github.event.pull_request.labels.*.name, 'gitflow-maintenance') || 
+      contains(github.event.pull_request.labels.*.name, 'dependabot')
+      )"
     runs-on: ubuntu-latest
     outputs:
       conclusion: ${{ steps.wait-for-build.outputs.conclusion }}
@@ -57,7 +60,11 @@ jobs:
 
   update-pr-with-artifacts:
     runs-on: ubuntu-latest
-    if: "needs.wait-for-deploy-script.outputs.conclusion != 'timed_out' && !contains(github.event.pull_request.labels.*.name, 'gitflow-maintenance dependabot')"
+    if: "needs.wait-for-deploy-script.outputs.conclusion != 'timed_out' && 
+        !(
+          contains(github.event.pull_request.labels.*.name, 'gitflow-maintenance') || 
+          contains(github.event.pull_request.labels.*.name, 'dependabot')
+        )"
     needs:
       - wait-for-deploy-script
 
