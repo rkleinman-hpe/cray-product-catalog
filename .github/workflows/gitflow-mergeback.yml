@@ -42,16 +42,24 @@ jobs:
 
       - uses: actions/checkout@v2
         with:
+          ref: develop
           token: ${{ steps.get-token.outputs.token }}
+
+      # https://github.com/peter-evans/create-pull-request/blob/main/docs/examples.md#keep-a-branch-up-to-date-with-another
+      - name: Reset target branch
+        run: |
+          git fetch origin master:master
+          git reset --hard master
 
       - name: Create pull request
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ steps.get-token.outputs.token }}
-          branch: master
+          branch: mergeback-master-${{ github.event.pull_request.head.ref }}
+          branch-suffix: timestamp
           base: develop
-          title: "[chore] Master -> Develop from PR #${{ github.event.pull_request.number }}"
+          title: "[chore] Master -> Develop from PR #${{ github.event.pull_request.number }} (${{ github.event.pull_request.head.ref }})"
           signoff: true
           assignees: ${{ github.actor }}
           committer: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
