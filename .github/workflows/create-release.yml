@@ -1,4 +1,25 @@
-# Create a new release
+#
+# MIT License
+#
+# (C) Copyright 2022 Hewlett Packard Enterprise Development LP
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+# OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+# ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
 name: Create Release
 
 on:
@@ -10,8 +31,7 @@ jobs:
 
   # Build and upload artifacts
   build-artifacts:
-    # FIXME: For now, have to specify a ref for calling reusable workflows, see https://github.community/t/ref-head-in-reusable-workflows/203690/30
-    uses: Cray-HPE/cray-product-catalog/.github/workflows/build-artifacts.yml@feature/increment
+    uses: ./.github/workflows/build-artifacts.yml
     secrets:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       ARTIFACTORY_ALGOL60_JFROG_CLI_CONFIGURATION: ${{ secrets.ARTIFACTORY_ALGOL60_JFROG_CLI_CONFIGURATION }}
@@ -30,19 +50,21 @@ jobs:
       contents: write
 
     steps:
-      - run: |
-          echo ${{ needs.build-artifacts.outputs.semVer }}
-          echo ${{ needs.build-artifacts.outputs.image-version }}
-          echo ${{ needs.build-artifacts.outputs.chart-version }}
-          echo ${{ needs.build-artifacts.outputs.py-version }}
-          echo ${{ needs.build-artifacts.outputs.is-stable }}
-          echo ${{ needs.build-artifacts.outputs.build-date-time }}
-          echo ${{ needs.build-artifacts.outputs.image }}
-          echo ${{ needs.build-artifacts.outputs.image_url }}
-          echo ${{ needs.build-artifacts.outputs.chart }}
-          echo ${{ needs.build-artifacts.outputs.chart_url }}
-          echo ${{ needs.build-artifacts.outputs.pymod }}
-          echo ${{ needs.build-artifacts.outputs.pymod_url }}
+      - name: Build variables
+        run: |
+          echo run-id: ${{ needs.build-artifacts.outputs.run-id }}
+          echo semVer: ${{ needs.build-artifacts.outputs.semVer }}
+          echo image-version: ${{ needs.build-artifacts.outputs.image-version }}
+          echo chart-version: ${{ needs.build-artifacts.outputs.chart-version }}
+          echo pymod-version: ${{ needs.build-artifacts.outputs.py-version }}
+          echo is-stable: ${{ needs.build-artifacts.outputs.is-stable }}
+          echo build-date-time: ${{ needs.build-artifacts.outputs.build-date-time }}
+          echo image: ${{ needs.build-artifacts.outputs.image }}
+          echo image_url: ${{ needs.build-artifacts.outputs.image_url }}
+          echo chart: ${{ needs.build-artifacts.outputs.chart }}
+          echo chart_url: ${{ needs.build-artifacts.outputs.chart_url }}
+          echo pymod: ${{ needs.build-artifacts.outputs.pymod }}
+          echo pymod_url: ${{ needs.build-artifacts.outputs.pymod_url }}
 
       - uses: actions/checkout@v2
 
@@ -54,7 +76,7 @@ jobs:
       - name: Extract release notes
         if: needs.build-artifacts.outputs.is-stable == 'stable'
         id: extract-release-notes
-        uses: ffurrer2/extract-release-notes@v1.10.0
+        uses: ffurrer2/extract-release-notes@v1.11.0
         with:
           changelog_file: CHANGELOG.md
 
@@ -64,7 +86,7 @@ jobs:
         with:
           template: .github/templates/release.md.tmpl
           vars: |
-            releaseNotes: ${{ steps.extract-release-notes.outputs.release_notes }}
+            releaseNotes: "${{ steps.extract-release-notes.outputs.release_notes }}"
             isStable: "${{ needs.build-artifacts.outputs.is-stable }}"
             image: "${{ needs.build-artifacts.outputs.image }}"
             imageUrl: "${{ needs.build-artifacts.outputs.image_url }}"
@@ -75,18 +97,45 @@ jobs:
             runUrl: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             runID: ${{ github.run_id }}
 
-      - uses: ncipollo/release-action@v1
+      - name: Download artifacts.json
+        uses: actions/download-artifact@v2
+        with:
+          name: artifacts.json
+
+      - name: Create Stable Release
+        uses: ncipollo/release-action@v1
+        id: stable-release
         if: needs.build-artifacts.outputs.is-stable == 'stable'
         with:
           generateReleaseNotes: true
           prerelease: false
           body: ${{ steps.template.outputs.result }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: artifacts.json
+          artifactContentType: application/json
+          allowUpdates: true  # for rebuilds to remove CVEs, etc
 
-      - uses: ncipollo/release-action@v1
+      - name: Output Release information
+        if: needs.build-artifacts.outputs.is-stable == 'stable'
+        run: |
+          echo Created release id: ${{ steps.stable-release.outputs.id}}
+          echo Created release: ${{ steps.stable-release.outputs.html_url}}
+
+      - name: Create Prerelease
+        id: prerelease-release
+        uses: ncipollo/release-action@v1
         if: needs.build-artifacts.outputs.is-stable == 'unstable'
         with:
           generateReleaseNotes: true
           prerelease: true
           body: ${{ steps.template.outputs.result }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: artifacts.json
+          artifactContentType: application/json
+          allowUpdates: true  # for rebuilds to remove CVEs, etc
+
+      - name: Output Release information
+        if: needs.build-artifacts.outputs.is-stable == 'unstable'
+        run: |
+          echo Created release id: ${{ steps.prerelease-release.outputs.id}}
+          echo Created release: ${{ steps.prerelease-release.outputs.html_url}}

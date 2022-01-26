@@ -7,9 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.18] - 2022-01-26
+
 ### Added
 
-- Draft Update CSM manifest workflow
+- Allow Github releases to be updated when rebuilding tagged releases
+  (for rebuilds to fix CVEs, etc)
+
+## [1.4.17] - 2022-01-26
+
+### Changed
+
+- Fix release note rendering for stable releases
+
+## [1.4.15] - 2022-01-25
+
+### Changed
+
+- Update to use new "no ref needed" reusable workflow
+
+## [1.4.14] - 2022-01-21
+
+### Added
+
+- Update CSM manifest workflow
 - Release workflow to build artifacts and create GH releases on tags
 
 ### Changed
@@ -109,7 +130,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated repo to Gitflow branching strategy; develop branch now base branch
 - Change default reviewers to CMS-core-product-support
 
-[Unreleased]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.13...HEAD
+[Unreleased]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.18...HEAD
+
+[1.4.18]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.17...1.4.18
+
+[1.4.17]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.15...1.4.17
+
+[1.4.15]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.14...1.4.15
+
+[1.4.14]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.13...1.4.14
 
 [1.4.13]: https://github.com/Cray-HPE/cray-product-catalog/compare/1.4.12...1.4.13
 
