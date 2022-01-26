@@ -28,7 +28,7 @@ on:
 
 jobs:
   merge-to-develop:
-    # this job will only run if the PR has been merged, not simply closed
+    # this job will only run if the PR has been merged, not just closed
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
@@ -37,8 +37,8 @@ jobs:
         uses: navikt/github-app-token-generator@v1
         id: get-token
         with:
-          private-key: ${{ secrets.CSM_MANIFEST_AUTOUPDATER_APP_KEY }}
-          app-id: ${{ secrets.CSM_MANIFEST_AUTOUPDATER_APP_ID }}
+          private-key: ${{ secrets.CSM_GITFLOW_MERGEBACK_BOT_APP_ID }}
+          app-id: ${{ secrets.CSM_GITFLOW_MERGEBACK_BOT_APP_KEY }}
 
       - uses: actions/checkout@v2
         with:
@@ -59,6 +59,7 @@ jobs:
           branch: mergeback-master-${{ github.event.pull_request.head.ref }}
           branch-suffix: timestamp
           base: develop
+          delete-branch: true
           title: "[chore] Master -> Develop from PR #${{ github.event.pull_request.number }} (${{ github.event.pull_request.head.ref }})"
           signoff: true
           assignees: ${{ github.actor }}
